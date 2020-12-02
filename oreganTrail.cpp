@@ -271,7 +271,7 @@ string lowercase(string input){
     }
     return input;
 };
-int wait(float fSeconds) {
+/*int wait(float fSeconds) {
     using namespace std::chrono; // nanoseconds, system_clock, seconds
     using namespace std::this_thread; // sleep_for, sleep_until
 
@@ -280,7 +280,7 @@ int wait(float fSeconds) {
     sleep_for(nanoseconds(inputToNanoseconds));
     sleep_until(system_clock::now() + seconds(iSeconds));
     return 0;
-}
+}*/
 string centerThis(string dothis, string input){
     // std centering of 88 spaces
     string spaces;
@@ -428,7 +428,7 @@ void initializeLog(){
 void spLoad(){
     for(int i = 0; i < 6; i++){
         cout << '.';
-        wait(0.5);
+        // wait(0.5);
     }
     cout << endl;
     return;
@@ -539,10 +539,10 @@ int core(){
     Traveler travelers[5];
     Store stores[15];
     bool visited[15];
-    string milestoneNames[8] = {"Shell Town", "Cocoyasi Village", "Syrup Village", "The Baratie", "Drum Island"};
     int intResponse = -1, month, day, numdays = -1;
-    string sInput;
     ErrorHandler oopsCore("core() stats");
+    string milestoneNames[8] = {"Shell Town", "Cocoyasi Village", "Syrup Village", "The Baratie", "Drum Island"};
+    string sInput;
     string invalidChars = oopsCore.getInvalidChars();
     // stores miles traveled, miles left to Fishman Island, food, cannon balls, money, sails, ship parts, medical kits
     vector <int> vecStats = {0, 2040, 100, 0, 1600, 0, 0, 0};
@@ -554,17 +554,17 @@ int core(){
     centerThis("cout", "Several years ago, the infamous pirate Gold D Roger was captured and put to death by the world governemnt.");
     centerThis("cout", "The world government's goal was to discourage pirates from ever sailing the sea again, but during his execution, Roger would say something that would change the world.");
     centerThis("cout", "\"You want my treausre? You can have it!\". These riviting last words would bring about a new era:");
-    wait(1.01);
+    // wait(1.01);
     centerThis("cout", "~~~ THE GREAT PIRATE ERA! ~~~\n");
-    wait(0.5);
+    // wait(0.5);
     centerThis("cout", "Whether or not he knew it, Roger had just set in motion the greatest events of our lifetime.");
-    wait(0.5);
+    // wait(0.5);
     centerThis("cout", "Touched by Rogers' words, you band together a rag tag group of pirates and set out to sea!");
-    wait(0.5);
+    // wait(0.5);
     centerThis("cout", "Your goal is the new world, but first you must survive");
-    wait(0.5);
+    // wait(0.5);
     centerThis("cout", "~~~ THE GRAND LINE ~~~");
-    wait(0.5);
+    // wait(0.5);
     
     oopsCore.setLocation("core() starting date");
     do{
@@ -612,7 +612,7 @@ int core(){
 
     cout << "Time to head out! First thing's first though, lets get some supplies!\n";
     spLoad();
-    statusUpdate();
+    statusUpdate(vecStats, numdays);
     //the first store's visit has to be written differently because there are some requirements that not all the stores have
 
     
@@ -621,6 +621,7 @@ int core(){
     while(1){
         string sTurnInput;
         int iTurnInput;
+
         cout << "The date is " << getInGameDate(numdays);
         cout << "What do you want to do?\n[1] Rest\n[2] Hunt\n[3] Continue\n[4] Status Update ";
         getline(cin, sTurnInput);
@@ -629,13 +630,13 @@ int core(){
         if(sTurnInput == "rest") restThisTurn();
         else if(sTurnInput == "continue") continueThisTurn();
         else if(sTurnInput == "hunt") huntThisTurn();
-        else if(sTurnInput == "status update") statusUpdate();
+        else if(sTurnInput == "status update") statusUpdate(vecStats, numdays);
         else if(oopsCore.trySTOI(sTurnInput) != -1){
             iTurnInput = stoi(sTurnInput);
             if(iTurnInput == 1) restThisTurn();
             else if(iTurnInput == 2) huntThisTurn();
             else if(iTurnInput == 3) continueThisTurn();
-            else if(iTurnInput == 4) statusUpdate();
+            else if(iTurnInput == 4) statusUpdate(vecStats, numdays);
             else cout << "Please input a number 1-4 or their corresponding phrases.\n";
         }
         else cout << "Please input \"rest\", \"continue\", \"hunt\", \"status update\", or their corresponding numbers.\n";

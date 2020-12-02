@@ -132,6 +132,6 @@ int huntThisTurn();
 int howManyAlive(Traveler);
 // convert the number o' days into an understandable date.
 string getInGameDate(int);
-int statusUpdate();
+int statusUpdate(vector <int>, int);
 // handles the turn by turn gameplay, random occurences, status updates, etc.
 int core();
