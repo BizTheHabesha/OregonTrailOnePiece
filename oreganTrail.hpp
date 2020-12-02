@@ -42,7 +42,7 @@ class ErrorHandler{
         void codeHandler(int);
         void codeHandler(string);
         // returns 0 for a valid yes, 1 for a valid no, and -1 for an invalid input.
-        int validResponse(string);
+        int checkResponse(string);
         // returns the list of invalid characters
         string getInvalidChars();
         // log this error using the Excpetion Handler phrase and location
@@ -92,7 +92,6 @@ class Store{
     private:
         // contains all of the statistics of the user that are not specific to the traveler.
         // the name of the milestones
-        string milestoneNames[8] = {"Shell Town", "Cocoyasi Village", "Syrup Village", "The Baratie", "Drum Island", };
         string storeName;
         int distance;
         // the number of stores that have been visted so far.

@@ -9,8 +9,6 @@ int main(){
     bool playThisSession = true;
     ErrorHandler oopsMain("main()");
 
-    
-
     cout << "Press Enter To Play\n";
     getline(cin, sInput);
     if(sInput == "X") playThisSession = false;
@@ -26,12 +24,12 @@ int main(){
         while(1){
             cout << "Play again? > ";
             cin >> sInput;
-            if(oopsMain.validResponse(sInput) == 2) cout << "Log was cleared\n";
-            else if(oopsMain.validResponse(sInput) != -1) break;
+            if(oopsMain.checkResponse(sInput) == 2) cout << "Log was cleared\n";
+            else if(oopsMain.checkResponse(sInput) != -1) break;
             cout << "Please input a valid yes or no response.\n";
         }
-        if(oopsMain.validResponse(sInput) == 0) continue;
-        if(oopsMain.validResponse(sInput) == 1) break;
+        if(oopsMain.checkResponse(sInput) == 0) continue;
+        if(oopsMain.checkResponse(sInput) == 1) break;
     }
 
     return 0;

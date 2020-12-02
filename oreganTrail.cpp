@@ -2,8 +2,6 @@
 #include "usefulFunctions.hpp"
 
 using namespace std;
-// contains statistics not specific to the travalers. These are the current date (mm-dd-yyyy), miles traveled, distance until next milestone (in miles), food (in lbs.),
-// chakra left (arbitrary units), and cash available (in $). Stored in this order: month, day, year, miles, distance, food, chakra, cash.
 string STDEXCEPTIONLOGGER = "Exception caught: ";
 
 // Error Handler Class
@@ -28,11 +26,6 @@ int ErrorHandler::validString(string aString){
     }else if(aString.empty()){
         logError("empty string");
         return -2;
-    }else if(trySTOI(aString) != -1){
-        return 3;
-    }else if(aString == "clearlog"){
-        clearLog(0);
-        return 2;
     }else{
         for(int i = 0; i < 6; i++){
             if(lowercase(aString) == validYes[i]) return 0;
@@ -77,7 +70,7 @@ int ErrorHandler::validStartingMonth(int aMonth){
         return -1;
     }
 }
-int ErrorHandler::validResponse(string sInput){
+int ErrorHandler::checkResponse(string sInput){
     // check for all of the yes responses
     for(int i = 0; i < 6; i++){
         if(lowercase(sInput) == validYes[i]) return 0;
@@ -95,6 +88,9 @@ int ErrorHandler::validResponse(string sInput){
     if(trySTOI(sInput) != -1){
         return 3;
     }
+    if(sInput == "hunt" || sInput == "rest" || sInput == "continue"){
+        return 4;
+    }
     // for for all of the exit responses
     for(int i = 0; i < 4; i++){
         if(sInput == validExit[i]){
@@ -102,9 +98,7 @@ int ErrorHandler::validResponse(string sInput){
             exit(EXIT_SUCCESS);
         }
     }
-    logError("invalid response");
     return -1;
-    
 }
 int ErrorHandler::trySTOI(string sInput){//holds the try catch block for a standard stoi operation, returns input integer
     int num;
@@ -246,7 +240,7 @@ vector <int> Store::visit(vector <int> aVec){
         cout << numSpaces << "In your wallet: ¥" << stats[7] << endl;
         cout << " > ";
         getline(cin, sInput);
-        oopsStore.validResponse(sInput);
+        oopsStore.checkResponse(sInput);
         if(sInput == "1"){
 
             continue;
@@ -261,7 +255,6 @@ vector <int> Store::visit(vector <int> aVec){
         cout << "Please input a valid option!\n";
     }
 }
-
 
 // Event class
 Event::Event(){
@@ -467,7 +460,7 @@ void getName(int index, Traveler aTravelers[]){
         string sInput;
         if(!firstTime) cout << " > ";
         getline(cin, sInput);
-        oopsGetName.validResponse(sInput);
+        oopsGetName.checkResponse(sInput);
         int intVR = aTravelers[index].setName(sInput);
         if(intVR == 0) break;
         else if(intVR == -2) cout << "Please input a name\n";
@@ -546,6 +539,7 @@ int core(){
     Traveler travelers[5];
     Store stores[15];
     bool visited[15];
+    string milestoneNames[8] = {"Shell Town", "Cocoyasi Village", "Syrup Village", "The Baratie", "Drum Island"};
     int intResponse = -1, month, day, numdays = -1;
     string sInput;
     ErrorHandler oopsCore("core() stats");
@@ -577,7 +571,7 @@ int core(){
         cout << "You can pick any date between 01, 03, 1847 and 01, 05, 1847 to start your journey\n";
         cout << "In what month will your crew be heading out? > ";
         getline(cin, sInput);
-        oopsCore.validResponse(sInput);
+        oopsCore.checkResponse(sInput);
         if(oopsCore.trySTOI(sInput) == -1){
             cout << "Please input a valid number\n";
         }else if(oopsCore.validStartingMonth(stoi(sInput)) == -1){
@@ -591,7 +585,7 @@ int core(){
     do{
         cout << "On which day will your crew be heading out? > ";
         getline(cin, sInput);
-        oopsCore.validResponse(sInput);
+        oopsCore.checkResponse(sInput);
         if(oopsCore.trySTOI(sInput) == -1){
             cout << "Please input a valid number\n";
         }else if(oopsCore.validStartingDay(month, stoi(sInput) == -1)){
@@ -620,22 +614,31 @@ int core(){
     spLoad();
     statusUpdate();
     //the first store's visit has to be written differently because there are some requirements that not all the stores have
-    
+
     
     //turn handling
     oopsCore.setLocation("core() turn handling");
     while(1){
-        string turnInput;
+        string sTurnInput;
+        int iTurnInput;
         cout << "The date is " << getInGameDate(numdays);
-        cout << "What do you want to do this turn? > ";
-        getline(cin, turnInput);
-        oopsCore.validResponse(turnInput);
-        if(turnInput == "rest") restThisTurn();
-        else if(turnInput == "continue") continueThisTurn();
-        else if(turnInput == "hunt") huntThisTurn();
-        else if(turnInput == "status update") statusUpdate();
-        else cout << "Please input \"rest\", \"continue\", \"hunt\", or \"status update\"";
-        break;
+        cout << "What do you want to do?\n[1] Rest\n[2] Hunt\n[3] Continue\n[4] Status Update ";
+        getline(cin, sTurnInput);
+        oopsCore.checkResponse(sTurnInput);
+
+        if(sTurnInput == "rest") restThisTurn();
+        else if(sTurnInput == "continue") continueThisTurn();
+        else if(sTurnInput == "hunt") huntThisTurn();
+        else if(sTurnInput == "status update") statusUpdate();
+        else if(oopsCore.trySTOI(sTurnInput) != -1){
+            iTurnInput = stoi(sTurnInput);
+            if(iTurnInput == 1) restThisTurn();
+            else if(iTurnInput == 2) huntThisTurn();
+            else if(iTurnInput == 3) continueThisTurn();
+            else if(iTurnInput == 4) statusUpdate();
+            else cout << "Please input a number 1-4 or their corresponding phrases.\n";
+        }
+        else cout << "Please input \"rest\", \"continue\", \"hunt\", \"status update\", or their corresponding numbers.\n";
     }
     cout << endl;
     return 0;
