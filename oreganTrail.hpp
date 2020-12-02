@@ -108,9 +108,9 @@ class Store{
         ErrorHandler oopsStore;
         // will take the item as an index, use that index to find the price from the the 'prices' index above, then check firstly: if the user has enough money, and secondly: if the user already has
         // the max amount for said item.
-        int buy(int, int);
+        int buy(int, int, int);
         // display the current statistics. log this as an md table
-        void visit();
+        vector <int> visit(vector <int>);
 };
 
 // log the current date and time to the gamelog.txt file. (will contain logs from the code to indicate errors and whatnot)
@@ -120,7 +120,7 @@ void initializeLog();
 // spoof a loading screen utilizing wait() from usefulFunctions.hpp
 void spLoad();
 // get the names for the users
-void getName();
+void getName(Traveler);
 // center a string with a certain number of spaces
 string centerThis(string, string);
 // resting takes between 1 and 3 days. Resting consumes 3 lbs. of food, per person, per day. logged
@@ -130,7 +130,7 @@ int continueThisTurn();
 // Hunting takes 1 day. logged
 int huntThisTurn();
 // Loop through the traveler array and returns how many are alive
-int howManyAlive(Traveler*);
+int howManyAlive(Traveler);
 // convert the number o' days into an understandable date.
 string getInGameDate(int);
 int statusUpdate();

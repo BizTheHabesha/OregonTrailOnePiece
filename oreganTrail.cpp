@@ -5,8 +5,6 @@ using namespace std;
 // contains statistics not specific to the travalers. These are the current date (mm-dd-yyyy), miles traveled, distance until next milestone (in miles), food (in lbs.),
 // chakra left (arbitrary units), and cash available (in $). Stored in this order: month, day, year, miles, distance, food, chakra, cash.
 string STDEXCEPTIONLOGGER = "Exception caught: ";
-Traveler travelers[5];
-Store stores[15];
 
 // Error Handler Class
 ErrorHandler::ErrorHandler(){
@@ -209,9 +207,10 @@ Store::Store(string aName){
     oopsStore.setLocation("Store::Store() (parameterized)");
     logThis("store constructed");
 }
-int Store::buy(int item, int quantity){
+int Store::buy(int item, int quantity, int money){
     double finalAmount = costs[item]*quantity;
-    if(stats[7] > finalAmount){
+    vector <int> stats;
+    if(money > finalAmount){
         if(item == 1) centerThis("cout", to_string(quantity)+" pound(s) of food will cost you:");
         else centerThis("cout", to_string(quantity)+" "+items[item]+"(s) will cost you: ");
         centerThis("cout", "~ "+to_string(finalAmount)+" ~");
@@ -221,12 +220,13 @@ int Store::buy(int item, int quantity){
     }
     return 0;
 }
-void Store::visit(){
+vector <int> Store::visit(vector <int> aVec){
     storesVisited++;
-    string sInput;
+    string sInput, numSpaces;
     int iInput;
-    string numSpaces;
+    vector <int> stats = aVec;
     oopsStore.setLocation("Store::visit()");
+
     logThis("Player visited "+storeName);
 
     while(1){
@@ -452,14 +452,14 @@ int huntThisTurn(){
     cout << "food time\n";
     return 0;
 }
-int howManyAlive(){
+int howManyAlive(Traveler aTravelers[]){
     int numAlive = 0;
     for(int i = 0; i < 5; i++){
-        if(travelers[i].getLiving()) numAlive++;
+        if(aTravelers[i].getLiving()) numAlive++;
     }
     return numAlive;
 }
-void getName(int index){
+void getName(int index, Traveler aTravelers[]){
     ErrorHandler oopsGetName("getName()");
     string invalidChars = oopsGetName.getInvalidChars();
     bool firstTime = true;
@@ -468,7 +468,7 @@ void getName(int index){
         if(!firstTime) cout << " > ";
         getline(cin, sInput);
         oopsGetName.validResponse(sInput);
-        int intVR = travelers[index].setName(sInput);
+        int intVR = aTravelers[index].setName(sInput);
         if(intVR == 0) break;
         else if(intVR == -2) cout << "Please input a name\n";
         else cout << "That name contains invalid character(s). These include: \"" << invalidChars << "\"\n";
@@ -543,13 +543,18 @@ int statusUpdate(vector <int> stats, int numdays){
 int core(){
     initializeLog();
 
+    Traveler travelers[5];
+    Store stores[15];
+    bool visited[15];
     int intResponse = -1, month, day, numdays = -1;
     string sInput;
     ErrorHandler oopsCore("core() stats");
-    Store firstStore;
     string invalidChars = oopsCore.getInvalidChars();
     // stores miles traveled, miles left to Fishman Island, food, cannon balls, money, sails, ship parts, medical kits
     vector <int> vecStats = {0, 2040, 100, 0, 1600, 0, 0, 0};
+
+    // initialize the boolean array
+    for(int i = 0; i < 15; i++) visited[i] = false;
 
     oopsCore.setLocation("core() pregame");
     centerThis("cout", "Several years ago, the infamous pirate Gold D Roger was captured and put to death by the world governemnt.");
@@ -574,7 +579,7 @@ int core(){
         getline(cin, sInput);
         oopsCore.validResponse(sInput);
         if(oopsCore.trySTOI(sInput) == -1){
-            cout << "Please input a valid month\n";
+            cout << "Please input a valid number\n";
         }else if(oopsCore.validStartingMonth(stoi(sInput)) == -1){
             cout << "Please input a valid month\n";
         }else{
@@ -588,7 +593,7 @@ int core(){
         getline(cin, sInput);
         oopsCore.validResponse(sInput);
         if(oopsCore.trySTOI(sInput) == -1){
-            cout << "Please input a valid day\n";
+            cout << "Please input a valid number\n";
         }else if(oopsCore.validStartingDay(month, stoi(sInput) == -1)){
             cout << "Please input a valid day\n";
         }else{
@@ -599,22 +604,23 @@ int core(){
 
     cout << "\nPositions and their coresponding names are arbitrary and only serve as a story telling piece\n";
     cout << "\nWhat be the Captain's name? (Your name) > ";
-    getName(0);
+    getName(0, travelers);
     cout << "\nWhat is your navigator's name? > ";
-    getName(1);
+    getName(1, travelers);
     cout << "\nWhat is your shipwright's name? > ";
-    getName(2);
+    getName(2, travelers);
     cout << "\nWhat is your doctor's name? > ";
-    getName(3);
+    getName(3, travelers);
     cout << "\nWhat is your musician's name? > ";
-    getName(4);
+    getName(4, travelers);
     cout << "\n\n";
     logThis("Squad is set, lets head out!");
 
     cout << "Time to head out! First thing's first though, lets get some supplies!\n";
     spLoad();
     statusUpdate();
-    firstStore.visit();
+    //the first store's visit has to be written differently because there are some requirements that not all the stores have
+    
     
     //turn handling
     oopsCore.setLocation("core() turn handling");
