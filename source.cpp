@@ -31,6 +31,5 @@ int main(){
         if(oopsMain.checkResponse(sInput) == 0) continue;
         if(oopsMain.checkResponse(sInput) == 1) break;
     }
-
     return 0;
 }
