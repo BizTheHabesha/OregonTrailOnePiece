@@ -15,6 +15,5 @@
 
 using namespace std;
 
-string lowercase(string input);
-int wait(float fSeconds);
-int trySTOI(string sInput);
+string lowercase(string);
+int trySTOI(string);

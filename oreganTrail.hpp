@@ -110,6 +110,8 @@ class Store{
         int buy(int, int, int);
         // display the current statistics. log this as an md table
         vector <int> visit(vector <int>);
+        double getCost(int);
+        string getItem(int);
 };
 
 // log the current date and time to the gamelog.txt file. (will contain logs from the code to indicate errors and whatnot)
@@ -122,16 +124,10 @@ void spLoad();
 void getName(Traveler);
 // center a string with a certain number of spaces
 string centerThis(string, string);
-// resting takes between 1 and 3 days. Resting consumes 3 lbs. of food, per person, per day. logged
-int restThisTurn();
-// takes 2 weeks. Consumes 3 lbs of food, per person, per day (42 lbs.). Typically travel between 70 and 140 miles per turn. logged
-int continueThisTurn();
-// Hunting takes 1 day. logged
-int huntThisTurn();
 // Loop through the traveler array and returns how many are alive
 int howManyAlive(Traveler);
 // convert the number o' days into an understandable date.
 string getInGameDate(int);
 int statusUpdate(vector <int>, int);
 // handles the turn by turn gameplay, random occurences, status updates, etc.
-int core();
+int core(bool);
