@@ -6,21 +6,22 @@ using namespace std;
 // One piece theme!
 int main(){
     string sInput;
-    bool playThisSession = true;
+    bool playThisSession = true, debug = false;
     ErrorHandler oopsMain("main()");
 
+    cls();
     cout << "Press Enter To Play\n";
     getline(cin, sInput);
-    if(sInput == "X") playThisSession = false;
-    if(sInput == "clearlog"){
-        playThisSession = false;
-        clearLog(0);
+    oopsMain.checkResponse(sInput);
+    if(sInput == "debug"){
+        debug = true;
     }
+
     // we loop through the game until the user no longer wants to play
     while(playThisSession){
         cout << "Feel free to type '!play' at any time to exit the game!\nThis game displays dates as dd, mm, yyyy\n";
         // most of the game is housed in the core function becuase I think it looks nicer :)
-        core();
+        core(debug);
         while(1){
             cout << "Play again? > ";
             cin >> sInput;
