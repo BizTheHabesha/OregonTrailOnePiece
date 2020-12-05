@@ -499,7 +499,8 @@ string getInGameDate(int numdays){
     }
 
     sDay = to_string(iDay);
-    if((iDay - 1) % 10 == 0) sDay+="st";
+    if(iDay == 11 || iDay == 12) sDay+="st";
+    else if((iDay - 1) % 10 == 0) sDay+="st";
     else if((iDay - 2) % 10 == 0) sDay+="nd";
     else if((iDay - 3) % 10 == 0) sDay+="rd";
     else sDay+="th";
@@ -508,25 +509,21 @@ string getInGameDate(int numdays){
 }
 int statusUpdate(vector <int> stats, int numdays){
     ErrorHandler oopsStatusUpdate("statusUpdate()");
-    string holder = "    ";
+    string holder;
     string sSpacesRequired;
-    int iSpacesRequired;
-    int spacesRequiredArr[8] = {20,32,20,18,11,11,16, 9};
+    int spacesRequiredArr[8] = {20,32,20,18,11,11,16,9};
 
     cout << "Here are your current stats:\n";
     centerThis("cout", "It is currently "+getInGameDate(numdays));
     centerThis("cout", "Miles Traveled:     Distance to Fishman Island:     Food (in lbs.):     Cannon Balls:     Money:     Sails:     Ship Parts:     Med Kits:");
+    holder = centerThis("numspaces", "Miles Traveled:     Distance to Fishman Island:     Food (in lbs.):     Cannon Balls:     Money:     Sails:     Ship Parts:     Med Kits:");
     for(int i = 0; i < 7; i++){
-        iSpacesRequired = spacesRequiredArr[i] - to_string(stats[i]).length();
-        for(int i = 0; i < iSpacesRequired; i++){
-            sSpacesRequired.push_back(' ');
+        holder+=to_string(stats[i]);
+        for(int j = 0; j < (spacesRequiredArr[i] - to_string(stats[i]).length()); j++){
+            holder+=" ";
         }
-        holder+=to_string(stats[i+3]);
-        holder+=sSpacesRequired;
-        //cout << stats[i+3] << sSpacesRequired;
-        sSpacesRequired.clear();
     }
-    centerThis("cout", holder);
+    cout << holder;
     cout << "\n\n";
     centerThis("cout", "~~~ Press enter when you're ready to continue ~~~");
     getline(cin, holder);
@@ -540,7 +537,7 @@ int core(bool debug){
     Traveler travelers[5];
     Store stores[15];
     bool visited[15], defaultDate = false;
-    int intResponse = -1, month, day, numdays = 275;
+    int intResponse = -1, month, day, numdays = 0;
     ErrorHandler oopsCore("core() stats");
     string milestoneNames[8] = {"Shell Town", "Cocoyasi Village", "Syrup Village", "The Baratie", "Drum Island"};
     string invalidChars = oopsCore.getInvalidChars();
@@ -594,6 +591,7 @@ int core(bool debug){
         }
         cls();
     }while(1);
+
     // get a valid starting day
     day = 28;
     while(!defaultDate){
@@ -612,10 +610,11 @@ int core(bool debug){
         }
         cls();
     }
+
     // convert the starting date to numdays
-    if(month == 3) numdays == day;
-    else if(month == 4) numdays == day + 31;
-    else if(month == 5) numdays == day + 30; 
+    if(month == 3) numdays = day;
+    else if(month == 4) numdays = day + 31;
+    else if(month == 5) numdays = day + 30; 
 
     //getting names
     cout << "\nPositions and their coresponding names are arbitrary and only serve as a story telling piece\n";
@@ -631,7 +630,7 @@ int core(bool debug){
             cout << endl;
         }else if(intResponse == -2) cout << "Please enter a name.\n";
         else{
-            wait(5);
+            wait(.01);
             cls();
             break;
         }
@@ -661,6 +660,7 @@ int core(bool debug){
         centerThis("cout", "You and you're crew have managed to save ¥1600");
         break;
     }
+    wait(1);
     cls();
 
     //turn handling
@@ -673,9 +673,9 @@ int core(bool debug){
             return 0;
         } 
 
-
         // check if the user is out of time
         if(numdays > 275){ 
+            numdays = 275;
             centerThis("cout", "It is now the "+getInGameDate(numdays));
             centerThis("cout", "The world government has taken a keen eye to you and your crew.");
             centerThis("cout", "You took too long getting to the New World at Fishmen Island, and the Navy has caught you\n");
@@ -707,8 +707,8 @@ int core(bool debug){
             numdays+=14;
             vecStats[2]-=(3*howManyAlive(travelers));
             milesTraveled = (rand() % 140) + 69;
-        }else if(lowercase(sTurnInput) == "continue" || iTurnInput == 4){
-
+        }else if(lowercase(sTurnInput) == "status update" || iTurnInput == 4){
+            statusUpdate(vecStats, numdays);
         }else if(iTurnInput == -1 || iTurnInput > 4) cout << "Please input a number 1-4 or their corresponding phrases.\n";
         else if(debug && sInput == "numdays") cout << " numdays: " << numdays;
         else cout << "Please input \"rest\", \"continue\", \"hunt\", \"status update\", or their corresponding numbers.\n";
@@ -729,6 +729,7 @@ int core(bool debug){
     }
     cls();
     cout << endl;
+
     return 0;
 }
 
